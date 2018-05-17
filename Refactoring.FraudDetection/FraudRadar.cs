@@ -10,52 +10,22 @@ namespace Payvision.CodeChallenge.Refactoring.FraudDetection
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Text;
 
     public class FraudRadar
     {
-        public IEnumerable<FraudResult> Check(string filePath)
+        public IEnumerable<FraudResult> Check(List<Order> orders)
         {
-            // READ FRAUD LINES
             var fraudResults = new List<FraudResult>();
+            foreach (var order in orders)
+            {
+                if (fraudResults.Exists(f => f.OrderId == order.OrderId))
+                    continue;
 
-            var lines = File.ReadAllLines(filePath);
-
-            var orders = lines.Select(OrderFactory.FromCsv).Where(l => l.Successful).Select(x => x.Order);
-            //// CHECK FRAUD
-            //for (int i = 0; i < orders.Count; i++)
-            //{
-            //    var current = orders[i];
-            //    bool isFraudulent = false;
-
-            //    for (int j = i + 1; j < orders.Count; j++)
-            //    {
-            //        isFraudulent = false;
-
-            //        if (current.DealId == orders[j].DealId
-            //            && current.Email == orders[j].Email
-            //            && current.CreditCard != orders[j].CreditCard)
-            //        {
-            //            isFraudulent = true;
-            //        }
-
-            //        if (current.DealId == orders[j].DealId
-            //            && current.State == orders[j].State
-            //            && current.ZipCode == orders[j].ZipCode
-            //            && current.Street == orders[j].Street
-            //            && current.City == orders[j].City
-            //            && current.CreditCard != orders[j].CreditCard)
-            //        {
-            //            isFraudulent = true;
-            //        }
-
-            //        if (isFraudulent)
-            //        {
-            //            fraudResults.Add(new FraudResult { IsFraudulent = true, OrderId = orders[j].OrderId });
-            //        }
-            //    }
-            //}
+                var fraudulentOrder = orders.FirstOrDefault(order.IsOtherFraudulent);
+                if (fraudulentOrder != null)
+                    fraudResults.Add(new FraudResult { IsFraudulent = true, OrderId = fraudulentOrder.OrderId });
+            }
 
             return fraudResults;
         }
@@ -65,25 +35,6 @@ namespace Payvision.CodeChallenge.Refactoring.FraudDetection
             public int OrderId { get; set; }
 
             public bool IsFraudulent { get; set; }
-        }
-
-        public class Order
-        {
-            public int OrderId { get; set; }
-
-            public int DealId { get; set; }
-
-            public string Email { get; set; }
-
-            public string Street { get; set; }
-
-            public string City { get; set; }
-
-            public string State { get; set; }
-
-            public string ZipCode { get; set; }
-
-            public string CreditCard { get; set; }
         }
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Payvision.CodeChallenge.Refactoring.FraudDetection.Tests.Unit
@@ -10,19 +6,29 @@ namespace Payvision.CodeChallenge.Refactoring.FraudDetection.Tests.Unit
     [TestClass]
     public class OrderTest
     {
-        [TestMethod]
-        public void EmailNormalization()
+        [TestClass]
+        public class EmailTest
         {
-            //var target = new Order();
-            //target.Email = "higor.crr@gmail.com";
+            [TestMethod]
+            public void EmailConstructor_RemoveDot()
+            {
+                var sut = new Email("higor.crr@gmail.com");
+                sut.ToString().Should().Be("higorcrr@gmail.com");
+            }
+            [TestMethod]
+            public void EmailConstructor_RemovePlus()
+            {
+                var sut = new Email("higor+crr@gmail.com");
+                sut.ToString().Should().Be("higor@gmail.com");
+            }
+            [TestMethod]
+            public void Email_Equality()
+            {
+                var sut = new Email("higor.crr@gmail.com");
+                var sutCopy = new Email("higor.crr@gmail.com");
 
-            //var aux = target.Email.Split(new char[] { '@' }, StringSplitOptions.RemoveEmptyEntries);
-
-            //var atIndex = aux[0].IndexOf("+", StringComparison.Ordinal);
-
-            //aux[0] = atIndex < 0 ? aux[0].Replace(".", "") : aux[0].Replace(".", "").Remove(atIndex);
-
-            //target.Email = string.Join("@", new string[] { aux[0], aux[1] });
+                sut.Should().Equals(sutCopy);
+            }
         }
     }
 }
