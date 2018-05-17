@@ -8,10 +8,7 @@ using System.Linq;
 
 namespace Payvision.CodeChallenge.Refactoring.FraudDetection
 {
-    using System;
     using System.Collections.Generic;
-    using System.Text;
-
     public class FraudRadar
     {
         public IEnumerable<FraudResult> Check(List<Order> orders)
@@ -26,7 +23,6 @@ namespace Payvision.CodeChallenge.Refactoring.FraudDetection
                 if (fraudulentOrder != null)
                     fraudResults.Add(new FraudResult { IsFraudulent = true, OrderId = fraudulentOrder.OrderId });
             }
-
             return fraudResults;
         }
 
